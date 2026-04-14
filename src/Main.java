@@ -1,42 +1,43 @@
-import java.util.ArrayList;
-import java.util.List;
-
 class TrainConsistManagementApp {
 
-    static class InvalidCapacityException extends Exception {
-        InvalidCapacityException(String message) {
+    static class CargoSafetyException extends RuntimeException {
+        CargoSafetyException(String message) {
             super(message);
         }
     }
 
-    static class PassengerBogie {
-        String name;
-        int capacity;
+    static class GoodsBogie {
+        String type;
+        String cargo;
 
-        PassengerBogie(String name, int capacity) throws InvalidCapacityException {
-            if (capacity <= 0) {
-                throw new InvalidCapacityException("Capacity must be greater than zero");
+        GoodsBogie(String type) {
+            this.type = type;
+        }
+
+        void assignCargo(String cargo) {
+            try {
+                if (type.equals("Rectangular") && cargo.equals("Petroleum")) {
+                    throw new CargoSafetyException("Unsafe cargo assignment");
+                }
+                this.cargo = cargo;
+                System.out.println(type + " bogie assigned with " + cargo);
+            } catch (CargoSafetyException e) {
+                System.out.println(e.getMessage());
+            } finally {
+                System.out.println("Assignment attempt completed");
             }
-            this.name = name;
-            this.capacity = capacity;
         }
     }
 
     public static void main(String[] args) {
         System.out.println("=== Train Consist Management App ===");
 
-        List<PassengerBogie> bogies = new ArrayList<>();
+        GoodsBogie b1 = new GoodsBogie("Cylindrical");
+        GoodsBogie b2 = new GoodsBogie("Rectangular");
 
-        try {
-            bogies.add(new PassengerBogie("Sleeper", 72));
-            bogies.add(new PassengerBogie("AC Chair", 60));
-            bogies.add(new PassengerBogie("First Class", 0));
-        } catch (InvalidCapacityException e) {
-            System.out.println(e.getMessage());
-        }
+        b1.assignCargo("Petroleum");
+        b2.assignCargo("Petroleum");
 
-        for (PassengerBogie b : bogies) {
-            System.out.println(b.name + " Capacity: " + b.capacity);
-        }
+        System.out.println("Program continues safely");
     }
 }
